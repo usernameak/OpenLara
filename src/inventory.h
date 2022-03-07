@@ -1494,7 +1494,7 @@ struct Inventory {
 
         if ((item->count > 1 || spec) && item->count < UNLIMITED_AMMO) {
             char buf[16];
-            sprintf(buf, "%d %c", item->count, spec);
+            LARA_SPRINTF(buf, "%d %c", item->count, spec);
             for (int i = 0; buf[i] != ' '; i++)
                 buf[i] -= 47;
             UI::textOut(pos, buf, UI::aRight, width, 255, UI::SHADE_NONE);
@@ -1999,9 +1999,12 @@ struct Inventory {
 
         UI::setupInventoryShading(vec3(0.0f));
 
+        LOG("Render Inventory Page 1");
         renderPage(page);
-        if (page != targetPage)
+        if (page != targetPage) {
+            LOG("Render Inventory Page 2");
             renderPage(targetPage);
+        }
     }
 
     void showLevelStats(const vec2 &pos) {
@@ -2020,11 +2023,11 @@ struct Inventory {
         int h = saveStats.time / 3600;
 
         if (h)
-            sprintf(time, "%d:%02d:%02d", h, m, s);
+            LARA_SPRINTF(time, "%d:%02d:%02d", h, m, s);
         else
-            sprintf(time, "%d:%02d", m, s);
+            LARA_SPRINTF(time, "%d:%02d", m, s);
 
-        sprintf(buf, STR[STR_LEVEL_STATS], 
+        LARA_SPRINTF(buf, STR[STR_LEVEL_STATS], 
                 STR[TR::LEVEL_INFO[saveStats.level].title],
                 saveStats.kills,
                 saveStats.pickups,
@@ -2086,10 +2089,10 @@ struct Inventory {
                 bBack   = "B";
             #endif
 
-            sprintf(buf, STR[STR_HELP_SELECT], bSelect);
+            LARA_SPRINTF(buf, STR[STR_HELP_SELECT], bSelect);
             UI::textOut(vec2(eye + dx, 480 - 64), buf, UI::aLeft, UI::width);
             if (chosen) {
-                sprintf(buf, STR[STR_HELP_BACK], bBack);
+                LARA_SPRINTF(buf, STR[STR_HELP_BACK], bBack);
                 UI::textOut(vec2(eye, 480 - 64), buf, UI::aRight, UI::width - dx);
             }
         }

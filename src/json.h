@@ -120,7 +120,7 @@ struct JSON {
             strcat(buffer, buf);
         } else if (type == FLOAT) {
             char buf[64];
-            sprintf(buf, "%.9g", fValue);
+            LARA_SPRINTF(buf, "%.9g", fValue);
             strcat(buffer, buf);
 
             //_gcvt(fValue, 8, buf);

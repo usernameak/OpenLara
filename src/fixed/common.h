@@ -228,7 +228,7 @@ X_INLINE int32 abs(int32 x) {
 #if defined(__GBA__) || defined(__NDS__) || defined(__32X__)
     #define int2str(x,str) itoa(x, str, 10)
 #elif defined(__3DO__)
-    #define int2str(x,str) sprintf(str, "%d", x)
+    #define int2str(x,str) LARA_SPRINTF(str, "%d", x)
 #elif defined(__TNS__)
     #define int2str(x,str) __itoa(x, str, 10)
 #else

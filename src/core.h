@@ -5,8 +5,8 @@
     #define PROFILE
 #endif
 
-#include <stdio.h>
-#include <memory.h>
+// #include <stdio.h>
+// #include <memory.h>
 
 #define OS_FILEIO_CACHE
 #define OS_PTHREAD_MT
@@ -214,6 +214,11 @@
     #define _OS_TNS   1
     #define _GAPI_SW  1
     #include <os.h>
+
+    #undef OS_PTHREAD_MT
+#elif defined(__BREW__)
+    #define _OS_BREW  1
+    #define _GAPI_SW  1
 
     #undef OS_PTHREAD_MT
 #endif
@@ -843,7 +848,7 @@ namespace Core {
                 j += 4;
             }
             char buf[256];
-            sprintf(buf, "noise/perlin_%03d", k);
+            LARA_SPRINTF(buf, "noise/perlin_%03d", k);
             Texture::SaveBMP(buf, (char*)pdata, PERLIN_TEX_SIZE, PERLIN_TEX_SIZE);
             offset += PERLIN_TEX_SIZE * PERLIN_TEX_SIZE;
         }

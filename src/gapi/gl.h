@@ -433,7 +433,7 @@
                 marker_series *&s = series[seriesIndex];
                 if (s == NULL) {
                    char seriesTitle[64];
-                   sprintf(seriesTitle, "events - %d", seriesIndex);
+                   LARA_SPRINTF(seriesTitle, "events - %d", seriesIndex);
                    s = new marker_series(seriesTitle);
                 }
                 cvSpan = new span(*s, normal_importance, _T(title));
@@ -617,10 +617,10 @@ namespace GAPI {
             strcat(defines, "#define VER3\n");
 
             for (int i = 0; i < defCount; i++) {
-                sprintf(defines + strlen(defines), "#define %s\n", DefineName[def[i]]);
+                LARA_SPRINTF(defines + strlen(defines), "#define %s\n", DefineName[def[i]]);
             }
 
-            sprintf(defines + strlen(defines), "#define SHADOW_SIZE %d.0\n", SHADOW_TEX_SIZE);
+            LARA_SPRINTF(defines + strlen(defines), "#define SHADOW_SIZE %d.0\n", SHADOW_TEX_SIZE);
 
             #ifdef MERGE_MODELS
                 strcat(defines, "#define MESH_SKINNING\n");
@@ -652,7 +652,7 @@ namespace GAPI {
         // generate shader file path
             if (Core::support.shaderBinary) {
                 uint32 hash = fnv32(defines, (int32)strlen(defines), fnv32(source, (int32)strlen(source)));
-                sprintf(fileName, "%08X.xsh", hash);
+                LARA_SPRINTF(fileName, "%08X.xsh", hash);
             }
 
             ID = glCreateProgram();

@@ -735,7 +735,7 @@ namespace UI {
 
     #ifdef UI_SHOW_FPS
         char buf[256];
-        sprintf(buf, "%d", Core::stats.fps);
+        LARA_SPRINTF(buf, "%d", Core::stats.fps);
         textOut(vec2(0, 16), buf, aLeft, width, 255, UI::SHADE_ORANGE);
     #endif
     }

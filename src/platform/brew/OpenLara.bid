@@ -1,0 +1,6 @@
+#ifndef OPENLARA_BID
+#define OPENLARA_BID
+
+#define AEECLSID_OPENLARA 0xA151E7B9 
+   
+#endif /* #ifndef OPENLARA_BID */

@@ -550,6 +550,24 @@ enum STBVorbisError
 #endif
 
 #ifndef STB_VORBIS_NO_CRT
+#ifdef __BREW__
+   typedef unsigned int   uint32;
+   typedef   signed int    int32;
+   #define _UINT32_DEFINED
+   #define _INT32_DEFINED
+
+   #include <AEEStdLib.h>
+   #include <string.h>
+   #include <assert.h>
+   #include <math.h>
+
+   #define STB_VORBIS_MALLOC  MALLOC
+   #define STB_VORBIS_FREE    FREE
+   #define STB_VORBIS_REALLOC REALLOC
+   #define STB_VORBIS_QSORT   QSORT
+
+   #define abs(x) ((x)<0 ? -(x) : (x))
+#else
    #include <stdlib.h>
    #include <string.h>
    #include <assert.h>
@@ -562,11 +580,16 @@ enum STBVorbisError
    #if defined(__linux__) || defined(__linux) || defined(__EMSCRIPTEN__)
       #include <alloca.h>
    #endif
+   #define STB_VORBIS_MALLOC  malloc
+   #define STB_VORBIS_FREE    free
+   #define STB_VORBIS_REALLOC realloc
+   #define STB_VORBIS_QSORT   qsort
+#endif
 #else // STB_VORBIS_NO_CRT
    #define NULL 0
-   #define malloc(s)   0
-   #define free(s)     ((void) 0)
-   #define realloc(s)  0
+   #define STB_VORBIS_MALLOC(s)      0
+   #define STB_VORBIS_FREE(s)        ((void) 0)
+   #define STB_VORBIS_REALLOC(p, s)  0
 #endif // STB_VORBIS_NO_CRT
 
 #include <limits.h>
@@ -915,13 +938,13 @@ static void *setup_malloc(vorb *f, int sz)
       f->setup_offset += sz;
       return p;
    }
-   return sz ? malloc(sz) : NULL;
+   return sz ? STB_VORBIS_MALLOC(sz) : NULL;
 }
 
 static void setup_free(vorb *f, void *p)
 {
    if (f->alloc.alloc_buffer) return; // do nothing; setup mem is a stack
-   free(p);
+   STB_VORBIS_FREE(p);
 }
 
 static void *setup_temp_malloc(vorb *f, int sz)
@@ -932,7 +955,7 @@ static void *setup_temp_malloc(vorb *f, int sz)
       f->temp_offset -= sz;
       return (char *) f->alloc.alloc_buffer + f->temp_offset;
    }
-   return malloc(sz);
+   return STB_VORBIS_MALLOC(sz);
 }
 
 static void setup_temp_free(vorb *f, void *p, int sz)
@@ -941,7 +964,7 @@ static void setup_temp_free(vorb *f, void *p, int sz)
       f->temp_offset += (sz+3)&~3;
       return;
    }
-   free(p);
+   STB_VORBIS_FREE(p);
 }
 
 #define CRC32_POLY    0x04c11db7   // from spec
@@ -1157,7 +1180,7 @@ static void compute_sorted_huffman(Codebook *c, uint8 *lengths, uint32 *values)
          c->sorted_codewords[i] = bit_reverse(c->codewords[i]);
    }
 
-   qsort(c->sorted_codewords, c->sorted_entries, sizeof(c->sorted_codewords[0]), uint32_compare);
+   STB_VORBIS_QSORT(c->sorted_codewords, c->sorted_entries, sizeof(c->sorted_codewords[0]), uint32_compare);
    c->sorted_codewords[c->sorted_entries] = 0xffffffff;
 
    len = c->sparse ? c->sorted_entries : c->entries;
@@ -2345,7 +2368,7 @@ void inverse_mdct_slow(float *buffer, int n)
 {
    int i,j;
    int n2 = n >> 1;
-   float *x = (float *) malloc(sizeof(*x) * n2);
+   float *x = (float *) STB_VORBIS_MALLOC(sizeof(*x) * n2);
    memcpy(x, buffer, sizeof(*x) * n2);
    for (i=0; i < n; ++i) {
       float acc = 0;
@@ -2360,7 +2383,7 @@ void inverse_mdct_slow(float *buffer, int n)
          acc += x[j] * (float) cos(M_PI / 2 / n * (2 * i + 1 + n/2.0)*(2*j+1));
       buffer[i] = acc;
    }
-   free(x);
+   STB_VORBIS_FREE(x);
 }
 #elif 0
 // same as above, but just barely able to run in real time on modern machines
@@ -2369,7 +2392,7 @@ void inverse_mdct_slow(float *buffer, int n, vorb *f, int blocktype)
    float mcos[16384];
    int i,j;
    int n2 = n >> 1, nmask = (n << 2) -1;
-   float *x = (float *) malloc(sizeof(*x) * n2);
+   float *x = (float *) STB_VORBIS_MALLOC(sizeof(*x) * n2);
    memcpy(x, buffer, sizeof(*x) * n2);
    for (i=0; i < 4*n; ++i)
       mcos[i] = (float) cos(M_PI / 2 * i / n);
@@ -2380,7 +2403,7 @@ void inverse_mdct_slow(float *buffer, int n, vorb *f, int blocktype)
          acc += x[j] * mcos[(2 * i + 1 + n2)*(2*j+1) & nmask];
       buffer[i] = acc;
    }
-   free(x);
+   STB_VORBIS_FREE(x);
 }
 #elif 0
 // transform to use a slow dct-iv; this is STILL basically trivial,
@@ -3987,7 +4010,7 @@ static int start_decoder(vorb *f)
             p[j].x = g->Xlist[j];
             p[j].id = j;
          }
-         qsort(p, g->values, sizeof(p[0]), point_compare);
+         STB_VORBIS_QSORT(p, g->values, sizeof(p[0]), point_compare);
          for (j=0; j < g->values; ++j)
             g->sorted_order[j] = (uint8) p[j].id;
          // precompute the neighbors
@@ -5311,7 +5334,7 @@ int stb_vorbis_decode_filename(const char *filename, int *channels, int *sample_
       *sample_rate = v->sample_rate;
    offset = data_len = 0;
    total = limit;
-   data = (short *) malloc(total * sizeof(*data));
+   data = (short *) STB_VORBIS_MALLOC(total * sizeof(*data));
    if (data == NULL) {
       stb_vorbis_close(v);
       return -2;
@@ -5324,9 +5347,9 @@ int stb_vorbis_decode_filename(const char *filename, int *channels, int *sample_
       if (offset + limit > total) {
          short *data2;
          total *= 2;
-         data2 = (short *) realloc(data, total * sizeof(*data));
+         data2 = (short *) STB_VORBIS_REALLOC(data, total * sizeof(*data));
          if (data2 == NULL) {
-            free(data);
+            STB_VORBIS_FREE(data);
             stb_vorbis_close(v);
             return -2;
          }
@@ -5351,7 +5374,7 @@ int stb_vorbis_decode_memory(const uint8 *mem, int len, int *channels, int *samp
       *sample_rate = v->sample_rate;
    offset = data_len = 0;
    total = limit;
-   data = (short *) malloc(total * sizeof(*data));
+   data = (short *) STB_VORBIS_MALLOC(total * sizeof(*data));
    if (data == NULL) {
       stb_vorbis_close(v);
       return -2;
@@ -5364,9 +5387,9 @@ int stb_vorbis_decode_memory(const uint8 *mem, int len, int *channels, int *samp
       if (offset + limit > total) {
          short *data2;
          total *= 2;
-         data2 = (short *) realloc(data, total * sizeof(*data));
+         data2 = (short *) STB_VORBIS_REALLOC(data, total * sizeof(*data));
          if (data2 == NULL) {
-            free(data);
+            STB_VORBIS_FREE(data);
             stb_vorbis_close(v);
             return -2;
          }

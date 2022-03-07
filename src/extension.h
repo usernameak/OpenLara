@@ -22,7 +22,7 @@ namespace Extension {
         glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data32);
 
         char path[256];
-        sprintf(path, "%s/%s", dir, name);
+        LARA_SPRINTF(path, "%s/%s", dir, name);
         Texture::SaveBMP(path, data32, tex->width, tex->height);
 
         delete[] data32;
@@ -42,7 +42,7 @@ namespace Extension {
         };
 
         char name[256];
-        sprintf(name, "%s/rooms.glb", dir);
+        LARA_SPRINTF(name, "%s/rooms.glb", dir);
 
         LOG("export rooms: %s\n", name);
 
@@ -157,10 +157,10 @@ namespace Extension {
                 continue;
             }
 
-            sprintf(name, "%d_mesh", roomIndex);
+            LARA_SPRINTF(name, "%d_mesh", roomIndex);
             gltf->addMesh(name, 0, accessorIndex + 0, accessorIndex + 1, accessorIndex + 2, accessorIndex + 3, accessorIndex + 4, -1, -1);
             
-            sprintf(name, "%d", roomIndex);
+            LARA_SPRINTF(name, "%d", roomIndex);
             gltf->addNode(name, nodeIndex, -1, vec3(float(-room.info.x), 0, float(room.info.z)) * MESH_SCALE, quat(0, 0, 0, 1));
             nodes->add(NULL, nodeIndex); // mesh
             nodeIndex++;
@@ -229,7 +229,7 @@ namespace Extension {
         };
 
         char name[256];
-        sprintf(name, "%s/model_%d.glb", dir, int(model.type));
+        LARA_SPRINTF(name, "%s/model_%d.glb", dir, int(model.type));
 
         LOG("export model: %s\n", name);
 
@@ -346,13 +346,13 @@ namespace Extension {
         gltf->addBufferView(0, 0, indicesOffset, sizeof(MeshIndex) * iCount); // 0
         gltf->addBufferView(0, sizeof(ModelVertex), verticesOffset, sizeof(ModelVertex) * vCount);    // 1
 
-        sprintf(name, "%d_mesh", int(model.type));
+        LARA_SPRINTF(name, "%d_mesh", int(model.type));
         gltf->addMesh(name, 0, 0, 1, 2, 3, -1, 4, 5);
 
         JSON *nodes;
         gltf->addScene("Scene", &nodes);
 
-        sprintf(name, "%d", int(model.type));
+        LARA_SPRINTF(name, "%d", int(model.type));
         gltf->addNode(name, 0, 0, vec3(0, 0, 0), quat(0, 0, 0, 1));
         nodes->add(NULL, 0); // mesh
         nodes->add(NULL, 1); // skeleton
@@ -458,7 +458,7 @@ namespace Extension {
         vec3 jointPos = vec3(0);
 
         for (int i = 0; i < model.mCount; i++) {
-            sprintf(name, "joint_%d", i + 1);
+            LARA_SPRINTF(name, "joint_%d", i + 1);
 
             JSON* node = gltf->addNode(name, -1, -1, jointPos * MESH_SCALE, quat(0, 0, 0, 1));
             JSON* children = new JSON(JSON::ARRAY, "children");
@@ -497,7 +497,7 @@ namespace Extension {
     void exportGeometry(IGame *game, Texture *atlasRooms, Texture *atlasObjects, Texture *atlasSprites) {
 
         char dir[256];
-        sprintf(dir, "dump/%s", TR::LEVEL_INFO[game->getLevel()->id].name);
+        LARA_SPRINTF(dir, "dump/%s", TR::LEVEL_INFO[game->getLevel()->id].name);
 
         CreateDirectory("dump", NULL);
         CreateDirectory(dir, NULL);

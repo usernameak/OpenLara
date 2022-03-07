@@ -1075,12 +1075,12 @@ namespace TR {
         if (useEasyStart) {
             switch (version) {
                 case VER_TR1_PC  :
-                    sprintf(dst, "DATA/%s.PHD", LEVEL_INFO[id].name);
+                    LARA_SPRINTF(dst, "DATA/%s.PHD", LEVEL_INFO[id].name);
                     if (Stream::existsContent(dst)) break;
-                    sprintf(dst, "%s.PHD", LEVEL_INFO[id].name);
+                    LARA_SPRINTF(dst, "%s.PHD", LEVEL_INFO[id].name);
                     break;
-                case VER_TR1_PSX : sprintf(dst, "PSXDATA/%s.PSX", LEVEL_INFO[id].name); break;
-                case VER_TR1_SAT : sprintf(dst, "DATA/%s.SAT",    LEVEL_INFO[id].name); break;
+                case VER_TR1_PSX : LARA_SPRINTF(dst, "PSXDATA/%s.PSX", LEVEL_INFO[id].name); break;
+                case VER_TR1_SAT : LARA_SPRINTF(dst, "DATA/%s.SAT",    LEVEL_INFO[id].name); break;
                 case VER_TR2_PC  : { // oh FFFFUUUUUUCKing CaTaComB.Tr2!
                     if (id == LVL_TR2_VENICE || id == LVL_TR2_CUT_2 || id == LVL_TR2_PLATFORM || id == LVL_TR2_CUT_3 || id == LVL_TR2_UNWATER || 
                         id == LVL_TR2_KEEL || id == LVL_TR2_LIVING || id == LVL_TR2_DECK || id == LVL_TR2_CATACOMB || id == LVL_TR2_ICECAVE ||
@@ -1088,13 +1088,13 @@ namespace TR {
                         char buf[64];
                         strcpy(buf, LEVEL_INFO[id].name);
                         StrUtils::toLower(buf);
-                        sprintf(dst, "DATA/%s.TR2", buf);
+                        LARA_SPRINTF(dst, "DATA/%s.TR2", buf);
                     } else if (id == LVL_TR2_TITLE) {
-                        sprintf(dst, "DATA/%s.tr2", LEVEL_INFO[id].name);
+                        LARA_SPRINTF(dst, "DATA/%s.tr2", LEVEL_INFO[id].name);
                     } else if (id == LVL_TR2_EMPRTOMB) {
                         strcpy(dst, "DATA/Emprtomb.tr2");
                     } else {
-                        sprintf(dst, "DATA/%s.TR2", LEVEL_INFO[id].name);
+                        LARA_SPRINTF(dst, "DATA/%s.TR2", LEVEL_INFO[id].name);
                     }
                     if (Stream::existsContent(dst)) break;
                     strcpy(dst, LEVEL_INFO[id].name);
@@ -1102,10 +1102,10 @@ namespace TR {
                     strcat(dst, ".TR2");
                     break;
                 }
-                case VER_TR2_PSX : sprintf(dst, "DATA/%s.PSX", LEVEL_INFO[id].name); break;
-                case VER_TR3_PC  : sprintf(dst, isCutsceneLevel(id) ? "cuts/%s.TR2" : "data/%s.TR2", LEVEL_INFO[id].name); break;
-                case VER_TR3_PSX : sprintf(dst, isCutsceneLevel(id) ? "CUTS/%s.PSX" : "DATA/%s.PSX", LEVEL_INFO[id].name); break;
-                case VER_TR4_PC  : sprintf(dst, "DATA/%s.tr4", LEVEL_INFO[id].name); break;
+                case VER_TR2_PSX : LARA_SPRINTF(dst, "DATA/%s.PSX", LEVEL_INFO[id].name); break;
+                case VER_TR3_PC  : LARA_SPRINTF(dst, isCutsceneLevel(id) ? "cuts/%s.TR2" : "data/%s.TR2", LEVEL_INFO[id].name); break;
+                case VER_TR3_PSX : LARA_SPRINTF(dst, isCutsceneLevel(id) ? "CUTS/%s.PSX" : "DATA/%s.PSX", LEVEL_INFO[id].name); break;
+                case VER_TR4_PC  : LARA_SPRINTF(dst, "DATA/%s.tr4", LEVEL_INFO[id].name); break;
                 default          : ASSERT(false);
             }
         } else {
@@ -1257,7 +1257,7 @@ namespace TR {
             default            : return false;
         }
 
-        sprintf(title, "track_%s", str);
+        LARA_SPRINTF(title, "track_%s", str);
         if (!checkTrack("", title) && !checkTrack("audio/1/", title) && !checkTrack("audio/", title)) {
             return false;
         }
@@ -1289,10 +1289,10 @@ namespace TR {
                 case VER_TR1_SAT :
                 case VER_TR1_PC  :
                 case VER_TR1_PSX :
-                    sprintf(title, "track_%02d", track);
+                    LARA_SPRINTF(title, "track_%02d", track);
                     if (!checkTrack("", title) && !checkTrack("audio/1/", title) && !checkTrack("audio/", title)) {
                         track = remapTrack(version, track);
-                        sprintf(title, "%03d", track);
+                        LARA_SPRINTF(title, "%03d", track);
                         if (!checkTrack("", title) && !checkTrack("audio/1/", title) && !checkTrack("audio/", title)) {
                             callback(NULL, userData);
                             return;
@@ -1306,7 +1306,7 @@ namespace TR {
                     //    return;
                     //}
                     track = remapTrack(version, track);
-                    sprintf(title, "track_%02d", track);
+                    LARA_SPRINTF(title, "track_%02d", track);
                     if (!checkTrack("", title) && !checkTrack("audio/2/", title) && !checkTrack("audio/", title)) {
                         callback(NULL, userData);
                         return;
@@ -1331,26 +1331,26 @@ namespace TR {
                 case VER_TR1_PSX : {
                     if (TR::checkWebDub(version, track)) {
                         const char *lng[] = { LANG_PREFIXES };
-                        sprintf(title, "audio/1/track_%02d%s.ogg", track, lng[Core::settings.audio.language]);
+                        LARA_SPRINTF(title, "audio/1/track_%02d%s.ogg", track, lng[Core::settings.audio.language]);
                     } else {
                         if (TR::getSubs(version, track) != STR_EMPTY) {
-                            sprintf(title, "audio/1/track_%02d_EN.ogg", track);
+                            LARA_SPRINTF(title, "audio/1/track_%02d_EN.ogg", track);
                         } else {
-                            sprintf(title, "audio/1/track_%02d.ogg", track);
+                            LARA_SPRINTF(title, "audio/1/track_%02d.ogg", track);
                         }
                     }
                 #ifndef _OS_WEB
                     if (Stream::existsContent(title))
                         break;
                     track = remapTrack(version, track);
-                    sprintf(title, "audio/1/%03d.ogg", track);
+                    LARA_SPRINTF(title, "audio/1/%03d.ogg", track);
                 #endif
                     break;
                 }
                 case VER_TR2_PC  :
                 case VER_TR2_PSX :
                     track = remapTrack(version, track);
-                    sprintf(title, "audio/2/track_%02d.ogg", track);
+                    LARA_SPRINTF(title, "audio/2/track_%02d.ogg", track);
                     break;
                 case VER_TR3_PC  :
                 case VER_TR3_PSX :
@@ -1358,7 +1358,7 @@ namespace TR {
                         callback(Sound::openCDAudioWAD("audio/3/cdaudio.wad", track), userData);
                         return;
                     #else
-                        sprintf(title, "audio/3/track_%02d.wav", track);
+                        LARA_SPRINTF(title, "audio/3/track_%02d.wav", track);
                     #endif
                     break;
                 default : return;

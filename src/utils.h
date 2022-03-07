@@ -1,7 +1,11 @@
 #ifndef H_UTILS
 #define H_UTILS
 
+#ifndef _OS_BREW
 #include <stdlib.h>
+#else
+#include <string.h>
+#endif
 #include <math.h>
 #include <float.h>
 
@@ -21,7 +25,7 @@
     #define ASSERT(expr) if (!(expr)) { LOG("ASSERT:\n  %s:%d\n  %s => %s\n", __FILE__, __LINE__, __FUNCTION__, #expr); debugBreak(); }
     #define ASSERTV(expr) ASSERT(expr)
 
-    #ifndef _OS_ANDROID
+    #if !defined(_OS_ANDROID) && !defined(_OS_BREW)
         #define LOG printf
     #endif
 
@@ -55,6 +59,11 @@
     #endif
 #endif
 
+#define LARA_MALLOC malloc
+#define LARA_REALLOC realloc
+#define LARA_FREE free
+#define LARA_SPRINTF sprintf
+
 #ifdef _OS_PSV
     #undef LOG
     #define LOG(...) psvDebugScreenPrintf(__VA_ARGS__)
@@ -64,6 +73,22 @@
     #include <android/log.h>
     #undef LOG
     #define LOG(...) __android_log_print(ANDROID_LOG_INFO,"OpenLara",__VA_ARGS__)
+#endif
+
+#ifdef _OS_BREW
+    #include "AEEStdLib.h"
+    
+    #undef LOG
+    #undef LARA_MALLOC
+    #undef LARA_REALLOC
+    #undef LARA_FREE
+    #undef LARA_SPRINTF
+
+    #define LOG DBGPRINTF
+    #define LARA_MALLOC MALLOC
+    #define LARA_REALLOC REALLOC
+    #define LARA_FREE FREE
+    #define LARA_SPRINTF SPRINTF
 #endif
 
 
@@ -1605,14 +1630,14 @@ struct Array {
     void reserve(int capacity) {
         this->capacity = capacity;
         if (items)
-            items = (T*)realloc(items, capacity * sizeof(T));
+            items = (T*)LARA_REALLOC(items, capacity * sizeof(T));
         else
-            items = (T*)malloc(capacity * sizeof(T));
+            items = (T*)LARA_MALLOC(capacity * sizeof(T));
     }
 
     int push(const T &item) {
         if (!items)
-            items = (T*)malloc(capacity * sizeof(T));
+            items = (T*)LARA_MALLOC(capacity * sizeof(T));
 
         if (length == capacity)
             reserve(capacity + capacity / 2);
@@ -1650,7 +1675,7 @@ struct Array {
 
     void clear() {
         reset();
-        free(items);
+        LARA_FREE(items);
         items = NULL;
     }
 

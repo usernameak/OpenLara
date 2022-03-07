@@ -392,7 +392,7 @@ namespace Debug {
                             int  floor     = level.boxes[s.boxIndex].floor;
 
                             if (blockable || block) {
-                                sprintf(buf, "blocked: %s", block ? "true" : "false");
+                                LARA_SPRINTF(buf, "blocked: %s", block ? "true" : "false");
                                 Debug::Draw::text(vec3(float(r.info.x + x * 1024 + 512), float(floor), float(r.info.z + z * 1024 + 512)), vec4(1, 1, 0, 1), buf);
                             }
                         }
@@ -406,7 +406,7 @@ namespace Debug {
             char str[64];
 
             TR::Box &b = level.boxes[boxIndex];
-            sprintf(str, "%d", boxIndex);
+            LARA_SPRINTF(str, "%d", boxIndex);
             Draw::text(vec3((b.maxX + b.minX) * 0.5f, b.floor, (b.maxZ + b.minZ) * 0.5f), vec4(0, 1, 0, 1), str);
             glColor4f(0.0f, 1.0f, 0.0f, 0.25f);
             Core::setBlendMode(bmAlpha);
@@ -415,7 +415,7 @@ namespace Debug {
             TR::Overlap *o = &level.overlaps[level.boxes[boxIndex].overlap.index];
             do {
                 TR::Box &b = level.boxes[o->boxIndex];
-                sprintf(str, "%d", o->boxIndex);
+                LARA_SPRINTF(str, "%d", o->boxIndex);
                 Draw::text(vec3((b.maxX + b.minX) * 0.5f, b.floor, (b.maxZ + b.minZ) * 0.5f), vec4(0, 0, 1, 1), str);
                 glColor4f(0.0f, 0.0f, 1.0f, 0.25f);
                 Core::setBlendMode(bmAlpha);
@@ -493,14 +493,14 @@ namespace Debug {
                 Controller *controller = (Controller*)e.controller;
                 if (!controller) continue;
           
-                sprintf(buf, "%s (%d) %s", getEntityName(level, e), i, controller->flags.invisible ? "INVISIBLE" : "");
+                LARA_SPRINTF(buf, "%s (%d) %s", getEntityName(level, e), i, controller->flags.invisible ? "INVISIBLE" : "");
                 Debug::Draw::text(controller->getPos() + randf() * 64.0f, controller->flags.active ? vec4(0, 0, 0.8f, 1) : vec4(0.8f, 0, 0, 1), buf);
             }
 
             for (int i = 0; i < level.camerasCount; i++) {
                 TR::Camera &c = level.cameras[i];
           
-                sprintf(buf, "%d (%d)", i, c.room);
+                LARA_SPRINTF(buf, "%d (%d)", i, c.room);
                 Debug::Draw::text(vec3(float(c.x), float(c.y), float(c.z)), vec4(0, 0.8f, 0, 1), buf);
             }
         }
@@ -538,7 +538,7 @@ namespace Debug {
                 if (!e.controller || !e.isEnemy()) continue;
 
                 Character *controller = (Character*)e.controller;
-                sprintf(buf, "zone: %d", controller->zone);
+                LARA_SPRINTF(buf, "zone: %d", controller->zone);
                 Debug::Draw::text(controller->pos - vec3(0, 128, 0), vec4(0, 1, 0.8f, 1), buf);
             }
         }
@@ -591,7 +591,7 @@ namespace Debug {
                     /*
                     {
                         char buf[255];
-                        sprintf(buf, "flags %d", (int)mesh.flags.value);
+                        LARA_SPRINTF(buf, "flags %d", (int)mesh.flags.value);
                         Debug::Draw::text(offset + (box.min + box.max) * 0.5f, vec4(0.5, 0.5, 1.0, 1), buf);
                     }
                     */
@@ -638,7 +638,7 @@ namespace Debug {
                     /*
                     { //if (e.id != 0) {
                         char buf[255];
-                        sprintf(buf, "(%d) radius %d flags %d", (int)e.type, (int)mesh->radius, (int)mesh->flags.value);
+                        LARA_SPRINTF(buf, "(%d) radius %d flags %d", (int)e.type, (int)mesh->radius, (int)mesh->flags.value);
                         Debug::Draw::text(sphere.center, vec4(0.5, 1, 0.5, 1), buf);
                     }
                     */
@@ -649,7 +649,7 @@ namespace Debug {
         void dumpPalette(TR::Level *level, int index)
         {
             char buf[255];
-            sprintf(buf, "tiles_PC/%02d.pal", index);
+            LARA_SPRINTF(buf, "tiles_PC/%02d.pal", index);
 
             FILE *f = fopen(buf, "wb");
             for (int i = 0; i < 256; i++) {
@@ -662,7 +662,7 @@ namespace Debug {
 
         void dumpSample(TR::Level *level, int index, int id, int sample) {
             char buf[255];
-            sprintf(buf, "samples_PSX/%03d_%d.wav", id, sample);
+            LARA_SPRINTF(buf, "samples_PSX/%03d_%d.wav", id, sample);
 
             if (level->version == TR::VER_TR1_PSX) {
                 uint32 dataSize = level->soundSize[index] / 16 * 28 * 2 * 4;
@@ -745,21 +745,21 @@ namespace Debug {
             vec3 viewPos = ((Lara*)controller)->camera->frustum->pos;
 
             char buf[255];
-            sprintf(buf, "DIP = %d, TRI = %d, SND = %d, active = %d", Core::stats.dips, Core::stats.tris, Sound::channelsCount, activeCount);
+            LARA_SPRINTF(buf, "DIP = %d, TRI = %d, SND = %d, active = %d", Core::stats.dips, Core::stats.tris, Sound::channelsCount, activeCount);
             Debug::Draw::text(vec2(16, y += 16), vec4(1.0f), buf);
             vec3 angle = controller->angle * RAD2DEG;
-            sprintf(buf, "pos = (%d, %d, %d), angle = (%d, %d), room = %d (camera: %d [%d, %d, %d])", int(controller->pos.x), int(controller->pos.y), int(controller->pos.z), (int)angle.x, (int)angle.y, controller->getRoomIndex(), game->getCamera()->getRoomIndex(), int(viewPos.x), int(viewPos.y), int(viewPos.z));
+            LARA_SPRINTF(buf, "pos = (%d, %d, %d), angle = (%d, %d), room = %d (camera: %d [%d, %d, %d])", int(controller->pos.x), int(controller->pos.y), int(controller->pos.z), (int)angle.x, (int)angle.y, controller->getRoomIndex(), game->getCamera()->getRoomIndex(), int(viewPos.x), int(viewPos.y), int(viewPos.z));
             Debug::Draw::text(vec2(16, y += 16), vec4(1.0f), buf);
             int rate = anim.anims[anim.index].frameRate;
-            sprintf(buf, "state = %d, anim = %d, next = %d, rate = %d, frame = %.2f / %d (%f)", anim.state, anim.index, anim.next, rate, anim.time * 30.0f, anim.framesCount, anim.delta);
+            LARA_SPRINTF(buf, "state = %d, anim = %d, next = %d, rate = %d, frame = %.2f / %d (%f)", anim.state, anim.index, anim.next, rate, anim.time * 30.0f, anim.framesCount, anim.delta);
             Debug::Draw::text(vec2(16, y += 16), vec4(1.0f), buf);
             
             TR::Level::FloorInfo info;
             controller->getFloorInfo(controller->getRoomIndex(), controller->pos, info);
-            sprintf(buf, "floor = %d, roomBelow = %d, roomAbove = %d, roomNext = %d, height = %d", info.floorIndex, info.roomBelow, info.roomAbove, info.roomNext, int(info.floor - info.ceiling));
+            LARA_SPRINTF(buf, "floor = %d, roomBelow = %d, roomAbove = %d, roomNext = %d, height = %d", info.floorIndex, info.roomBelow, info.roomAbove, info.roomNext, int(info.floor - info.ceiling));
             Debug::Draw::text(vec2(16, y += 16), vec4(1.0f), buf);
 
-            sprintf(buf, "stats: time = %d, distance = %d, secrets = %c%c%c, pickups = %d, mediUsed = %d, ammoUsed = %d, kills = %d", saveStats.time, saveStats.distance, 
+            LARA_SPRINTF(buf, "stats: time = %d, distance = %d, secrets = %c%c%c, pickups = %d, mediUsed = %d, ammoUsed = %d, kills = %d", saveStats.time, saveStats.distance, 
                 (saveStats.secrets & 4) ? '1' : '0', 
                 (saveStats.secrets & 2) ? '1' : '0',
                 (saveStats.secrets & 1) ? '1' : '0', saveStats.pickups, saveStats.mediUsed, saveStats.ammoUsed, saveStats.kills);
@@ -770,7 +770,7 @@ namespace Debug {
                 Debug::Draw::text(vec2(16, y += 16), vec4(1.0f, 0.5f, 0.3f, 1.0f), "LAVA");
 
             if (info.climb) {
-                sprintf(buf, "climb mask:");
+                LARA_SPRINTF(buf, "climb mask:");
                 if (info.climb & 0x01) strcat(buf, " +Z");
                 if (info.climb & 0x02) strcat(buf, " +X");
                 if (info.climb & 0x04) strcat(buf, " -Z");
@@ -779,17 +779,17 @@ namespace Debug {
             }
 
             if (info.trigCmdCount > 0) {
-                sprintf(buf, "trigger: %s%s mask: %d timer: %d", getTriggerType(level, info.trigger), info.trigInfo.once ? " (once)" : "", info.trigInfo.mask, info.trigInfo.timer);
+                LARA_SPRINTF(buf, "trigger: %s%s mask: %d timer: %d", getTriggerType(level, info.trigger), info.trigInfo.once ? " (once)" : "", info.trigInfo.mask, info.trigInfo.timer);
                 Debug::Draw::text(vec2(16, y += 16), vec4(0.5f, 0.8f, 0.5f, 1.0f), buf);
 
                 for (int i = 0; i < info.trigCmdCount; i++) {
                     TR::FloorData::TriggerCommand &cmd = info.trigCmd[i];
                     
                     const char *ent = (cmd.action == TR::Action::ACTIVATE || cmd.action == TR::Action::CAMERA_TARGET) ? (cmd.args < level.entitiesBaseCount ? getEntityName(level, level.entities[cmd.args]) : "BAD_ENTITY_INDEX") : "";
-                    sprintf(buf, "%s -> %s (%d)", getTriggerAction(level, cmd.action), ent, cmd.args);
+                    LARA_SPRINTF(buf, "%s -> %s (%d)", getTriggerAction(level, cmd.action), ent, cmd.args);
                     if (cmd.action == TR::Action::CAMERA_SWITCH || cmd.action == TR::Action::FLYBY || cmd.action == TR::Action::CUTSCENE) {
                         i++;
-                        sprintf(buf, "%s delay: %d speed: %d", buf, int(info.trigCmd[i].timer), int(info.trigCmd[i].speed));
+                        LARA_SPRINTF(buf, "%s delay: %d speed: %d", buf, int(info.trigCmd[i].timer), int(info.trigCmd[i].speed));
                     }
 
                     Debug::Draw::text(vec2(16, y += 16), vec4(0.1f, 0.6f, 0.1f, 1.0f), buf);

@@ -21,9 +21,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
+#ifndef __BREW__
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#endif
 #include <math.h>
 
 #ifdef _MSC_VER
@@ -51,6 +53,19 @@ typedef   signed long long   int64;
 
 #define PI 3.14159265358979
 
+#ifdef __BREW__
+#define _UINT32_DEFINED
+#define _INT32_DEFINED
+#include <AEEStdLib.h>
+#define libc_malloc  MALLOC
+#define libc_calloc(a, b)  MALLOC((a) * (b))
+#define libc_realloc REALLOC
+#define libc_free    FREE
+
+#define libc_memset  MEMSET
+#define libc_memcpy  MEMCPY
+#define libc_memmove MEMMOVE
+#else
 #define libc_malloc  malloc
 #define libc_calloc  calloc
 #define libc_realloc realloc
@@ -59,6 +74,7 @@ typedef   signed long long   int64;
 #define libc_memset  memset
 #define libc_memcpy  memcpy
 #define libc_memmove memmove
+#endif
 
 #define libc_exp     exp
 #define libc_pow     pow
@@ -2263,7 +2279,7 @@ static int mp_decode_layer3(mp3_context_t *s) {
         s->last_buf_size= main_data_begin;
       }
 
-    memcpy(s->last_buf + s->last_buf_size, ptr, EXTRABYTES);
+    libc_memcpy(s->last_buf + s->last_buf_size, ptr, EXTRABYTES);
     s->in_gb= s->gb;
     init_get_bits(&s->gb, s->last_buf + s->last_buf_size - main_data_begin, main_data_begin*8);
 
