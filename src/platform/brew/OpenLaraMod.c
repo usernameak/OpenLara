@@ -65,12 +65,14 @@ static void       AEEMod_FreeResources(IModule *po, IHeap *ph, IFileMgr *pfm);
 /*-------------------------------------------------------------------
             Global Constant Definitions
 -------------------------------------------------------------------*/
+#ifdef __ARMCGCC
 extern void (*__preinit_array_start []) (void) __attribute__((weak));
 extern void (*__preinit_array_end []) (void) __attribute__((weak));
 extern void (*__init_array_start []) (void) __attribute__((weak));
 extern void (*__init_array_end []) (void) __attribute__((weak));
 extern void (*__fini_array_start []) (void) __attribute__((weak));
 extern void (*__fini_array_end []) (void) __attribute__((weak));
+#endif
 
 /*-------------------------------------------------------------------
             Global Data Definitions
@@ -134,6 +136,7 @@ __declspec(dllexport)
 int AEEMod_Load(IShell *pIShell, void *ph, IModule **ppMod)
 {
    // [OpenLara] initialize .preinit/.init
+#ifdef __ARMCGCC
    void(**currentInitializer)(void);
    currentInitializer = __preinit_array_start;
    while(currentInitializer != __preinit_array_end) {
@@ -143,6 +146,7 @@ int AEEMod_Load(IShell *pIShell, void *ph, IModule **ppMod)
    while(currentInitializer != __init_array_end) {
       (*currentInitializer++)();
    }
+#endif
    // Invoke helper function to do the actual loading.
    return AEEStaticMod_New(sizeof(AEEMod),pIShell,ph,ppMod,NULL,NULL);
 }
@@ -414,11 +418,13 @@ Side Effects: None
 ==============================================================================*/
 static void AEEMod_FreeResources(IModule *po, IHeap *ph, IFileMgr *pfm)
 {
+#ifdef __ARMCGCC
    void(**currentFinalizer)(void);
    currentFinalizer = __fini_array_start;
    while(currentFinalizer != __fini_array_end) {
       (*currentFinalizer++)();
    }
+#endif
    (void)po,(void)ph,(void)pfm; /* all unused */
 }
 

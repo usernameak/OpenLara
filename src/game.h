@@ -71,8 +71,8 @@ namespace Game {
         delete level;
         level = new Level(*lvl);
 
-        bool playLogo = false;//level->level.isTitle() && id == TR::LVL_MAX;
-        playVideo = false;//playVideo && (id != level->level.id);
+        bool playLogo = level->level.isTitle() && id == TR::LVL_MAX;
+        playVideo = playVideo && (id != level->level.id);
 
         if (level->level.isTitle() && id != TR::LVL_MAX && !TR::isGameEnded)
             playVideo = false;
@@ -341,8 +341,6 @@ namespace Game {
 
         PROFILE_MARKER("RENDER");
         PROFILE_TIMING(Core::stats.tFrame);
-
-        DBGPRINTF("Game Render 01, level %p", level);
 
         level->render();
         #ifdef DEBUG_RENDER

@@ -137,6 +137,54 @@
     #include <GLES3/gl3.h>
     #include <GLES2/gl2ext.h>
     extern EGLDisplay display;
+#elif defined(_OS_BREW)
+    #define GL_OES_VERSION_1_1
+    #include <gles/egl.h>
+    #include <gles/gl.h>
+    #include <gles/glESext.h>
+
+    #define GL_TEXTURE_3D               0 
+    #define GL_TEXTURE_WRAP_R           0 
+    #define GL_TEXTURE_MAX_LEVEL        0
+    #define GL_TEXTURE_COMPARE_MODE     0x884C
+    #define GL_TEXTURE_COMPARE_FUNC     0x884D
+    #define GL_COMPARE_REF_TO_TEXTURE   0x884E
+    #define GL_TEXTURE_MAX_ANISOTROPY_EXT 0
+
+    #define GL_RG           GL_RGBA
+    #define GL_RGBA32F      GL_RGBA
+    #define GL_RGBA16F      GL_RGBA
+    #define GL_RG32F        GL_RGBA
+    #define GL_RG16F        GL_RGBA
+    #define GL_UNSIGNED_INT 0
+    #define GL_HALF_FLOAT   GL_FLOAT
+
+    #define glTexImage3D(...) 0
+
+    #define glGenRenderbuffers glGenRenderbuffersOES
+    #define glBindFramebuffer glBindFramebufferOES
+    #define glDeleteFramebuffers glDeleteFramebuffersOES
+    #define glDeleteFramebuffers glDeleteFramebuffersOES
+    #define glDeleteRenderbuffers glDeleteRenderbuffersOES
+    #define glBindRenderbuffer glBindRenderbufferOES
+    #define glFramebufferRenderbuffer glFramebufferRenderbufferOES
+    #define glFramebufferTexture2D glFramebufferTexture2DOES
+    #define glRenderbufferStorage glRenderbufferStorageOES
+    #define glCheckFramebufferStatus glCheckFramebufferStatusOES
+    #define glGenVertexArrays(...)
+    #define glDeleteVertexArrays(...)
+    #define glBindVertexArray(...)
+
+    #define GL_FRAMEBUFFER_COMPLETE           0x8CD5
+    #define GL_FRAMEBUFFER                    0x8D40
+    #define GL_DEPTH_ATTACHMENT               0x8D00
+    #define GL_COLOR_ATTACHMENT0              0x8CE0
+    #define GL_RGB565 GL_RGB565_OES
+    #define GL_RENDERBUFFER                   0x8D41
+    #define GL_DEPTH_COMPONENT                0x1902
+    #define GL_DEPTH_COMPONENT16              0x81A5
+    #define GL_RED GL_RGBA
+    #define GL_R8 GL_RGBA
 #elif defined(_OS_GCW0)
     #include <GLES2/gl2.h>
     #include <GLES2/gl2ext.h>
@@ -305,7 +353,7 @@
     #define glProgramBinary(...)
 #endif
 
-#if defined(_OS_WIN) || defined(_OS_LINUX) || defined(_OS_GCW0) || (defined(__SDL2__) && (defined(_GAPI_GLES2) || defined(_SDL2_OPENGL)))
+#if defined(_OS_WIN) || defined(_OS_LINUX) || defined(_OS_GCW0) || (defined(__SDL2__) && (defined(_GAPI_GLES2) || defined(_SDL2_OPENGL))) || defined(_OS_BREW)
 
     void* GetProc(const char *name) {
         #ifdef _OS_WIN
@@ -398,13 +446,28 @@
         PFNGLBUFFERSUBDATAARBPROC           glBufferSubData;
     #endif
 
-// Vertex Arrays
-    PFNGLGENVERTEXARRAYSPROC            glGenVertexArrays;
-    PFNGLDELETEVERTEXARRAYSPROC         glDeleteVertexArrays;
-    PFNGLBINDVERTEXARRAYPROC            glBindVertexArray;
-// Binary shaders
-    PFNGLGETPROGRAMBINARYPROC           glGetProgramBinary;
-    PFNGLPROGRAMBINARYPROC              glProgramBinary;
+    #ifdef _OS_BREW
+        PFNGLGENFRAMEBUFFERSOESPROC                     glGenFramebuffersOES;
+        PFNGLBINDFRAMEBUFFEROESPROC                     glBindFramebufferOES;
+        PFNGLGENRENDERBUFFERSOESPROC                    glGenRenderbuffersOES;
+        PFNGLBINDRENDERBUFFEROESPROC                    glBindRenderbufferOES;
+        PFNGLFRAMEBUFFERTEXTURE2DOESPROC                glFramebufferTexture2DOES;
+        PFNGLFRAMEBUFFERRENDERBUFFEROESPROC             glFramebufferRenderbufferOES;
+        PFNGLRENDERBUFFERSTORAGEOESPROC                 glRenderbufferStorageOES;
+        PFNGLCHECKFRAMEBUFFERSTATUSOESPROC              glCheckFramebufferStatusOES;
+        PFNGLDELETEFRAMEBUFFERSOESPROC                  glDeleteFramebuffersOES;
+        PFNGLDELETERENDERBUFFERSOESPROC                 glDeleteRenderbuffersOES;
+    #endif
+
+    #ifndef _OS_BREW
+    // Vertex Arrays
+        PFNGLGENVERTEXARRAYSPROC            glGenVertexArrays;
+        PFNGLDELETEVERTEXARRAYSPROC         glDeleteVertexArrays;
+        PFNGLBINDVERTEXARRAYPROC            glBindVertexArray;
+    // Binary shaders
+        PFNGLGETPROGRAMBINARYPROC           glGetProgramBinary;
+        PFNGLPROGRAMBINARYPROC              glProgramBinary;
+    #endif
 
     #if defined(_GAPI_GLES)
         PFNGLDISCARDFRAMEBUFFEREXTPROC      glDiscardFramebufferEXT;
@@ -930,9 +993,11 @@ namespace GAPI {
 
         void generateMipMap() {
             bind(0);
+#ifndef _OS_BREW
             if (glGenerateMipmap) {
                 glGenerateMipmap(target);
             }
+#endif
             if ((opt & (OPT_VOLUME | OPT_CUBEMAP | OPT_NEAREST)) == 0 && (Core::support.maxAniso > 0)) {
                 glTexParameteri(target, GL_TEXTURE_MAX_ANISOTROPY_EXT, min(int(Core::support.maxAniso), 8));
                 if (Core::support.texMaxLevel) {
@@ -1149,7 +1214,7 @@ namespace GAPI {
 
 
     bool extSupport(const char *str) {
-        #if !defined(_GAPI_GLES2) && !_OS_MAC
+        #if !defined(_GAPI_GLES2) && !_OS_MAC && !_OS_BREW
         if (glGetStringi != NULL) {
             GLint count = 0;
             glGetIntegerv(GL_NUM_EXTENSIONS, &count); 
@@ -1182,7 +1247,7 @@ namespace GAPI {
                 GetProcOGL(glDiscardFramebufferEXT);
         #endif
 
-        #if defined(_OS_WIN) || defined(_OS_LINUX) || defined(_OS_GCW0) || (defined(__SDL2__) && !defined(_GAPI_GLES)) 
+        #if defined(_OS_WIN) || defined(_OS_LINUX) || defined(_OS_GCW0) || (defined(__SDL2__) && !defined(_GAPI_GLES)) || defined(_OS_BREW) 
             #ifdef _OS_WIN
                 GetProcOGL(glActiveTexture);
             #endif
@@ -1255,12 +1320,14 @@ namespace GAPI {
                 GetProcOGL(glBufferSubData);
             #endif
 
-            GetProcOGL(glGenVertexArrays);
-            GetProcOGL(glDeleteVertexArrays);
-            GetProcOGL(glBindVertexArray);
+            #ifndef _OS_BREW
+                GetProcOGL(glGenVertexArrays);
+                GetProcOGL(glDeleteVertexArrays);
+                GetProcOGL(glBindVertexArray);
 
-            GetProcOGL(glGetProgramBinary);
-            GetProcOGL(glProgramBinary);
+                GetProcOGL(glGetProgramBinary);
+                GetProcOGL(glProgramBinary);
+            #endif
 
             #if defined(_GAPI_GLES)
                 GetProcOGL(glDiscardFramebufferEXT);

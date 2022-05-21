@@ -5,7 +5,7 @@
 #include "texture.h"
 #include "sound.h"
 
-#ifdef _OS_TNS
+#if defined(_OS_TNS) || defined(_OS_BREW)
     #define NO_VIDEO
 #endif
 

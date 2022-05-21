@@ -33,7 +33,7 @@
     #endif
 
     #undef OS_PTHREAD_MT
-#elif WIN32
+#elif WIN32 && !defined(__BREW__)
     #define _OS_WIN      1
     #define _GAPI_GL     1
     //#define _GAPI_D3D9   1
@@ -217,8 +217,9 @@
 
     #undef OS_PTHREAD_MT
 #elif defined(__BREW__)
-    #define _OS_BREW  1
-    #define _GAPI_SW  1
+    #define _OS_BREW    1
+    #define _GAPI_GL    1
+    #define FFP
 
     #undef OS_PTHREAD_MT
 #endif

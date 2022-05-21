@@ -1,7 +1,7 @@
 #ifndef H_SOUND
 #define H_SOUND
 
-#ifdef _OS_TNS
+#if defined(_OS_TNS)
     #define NO_SOUND
 #endif
 

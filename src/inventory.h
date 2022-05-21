@@ -1999,10 +1999,8 @@ struct Inventory {
 
         UI::setupInventoryShading(vec3(0.0f));
 
-        LOG("Render Inventory Page 1");
         renderPage(page);
         if (page != targetPage) {
-            LOG("Render Inventory Page 2");
             renderPage(targetPage);
         }
     }

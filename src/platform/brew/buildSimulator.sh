@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Should be built with mingw-w64-x86_64-arm-none-eabi-gcc
+# Should be built with mingw-w64-x86_64-gcc
 
 set -e
 
@@ -18,7 +18,7 @@ fi
 
 # SDK_PATH=/d/src/BREW/BREW_3.1.5_SP02_PLATFORM/sdk/
 
-BINDIR=../../../bin/brew/
+BINDIR=../../../bin/brewsim/
 OBJDIR=$BINDIR/obj
 
 mkdir -p $BINDIR
@@ -26,28 +26,25 @@ mkdir -p $OBJDIR
 mkdir -p $BINDIR/mod/OpenLara
 mkdir -p $BINDIR/mif/
 
-CFLAGS="-Os -fshort-wchar -mword-relocations \
+CFLAGS="-O0 -fshort-wchar -m32 -DAEE_SIMULATOR \
         -ffunction-sections -fdata-sections \
-        -fno-exceptions -marm -mthumb-interwork \
-        -march=armv5te -I$SDK_PATH/inc -I../../ -I$BREW_GL_SDK_PATH/inc \
-        -fdiagnostics-color -specs=nosys.specs \
+        -fno-exceptions -I$SDK_PATH/inc -I../../ -I$BREW_GL_SDK_PATH/inc \
+        -fdiagnostics-color \
         -D__ARMCGCC -DDYNAMIC_APP -D__BREW__ -DSTB_VORBIS_NO_STDIO"
-LDFLAGS="${CFLAGS} -nostartfiles -Wl,--entry=AEEMod_Load -Wl,--emit-relocs  \
-              -Wl,--default-script=elf2mod.x \
-			  -Wl,--no-wchar-size-warning -static-libgcc -Wl,--gc-sections"
+LDFLAGS="${CFLAGS} -shared"
 CXXFLAGS="$CFLAGS -fno-use-cxa-atexit -fno-rtti"
 LDLIBS="-lm"
 
 function compileFileC {
     local sourceName=${1}
 
-    arm-none-eabi-gcc $CFLAGS -o $OBJDIR/$(basename ${sourceName%.*}.o) -c $sourceName
+    gcc $CFLAGS -o $OBJDIR/$(basename ${sourceName%.*}.o) -c $sourceName
 }
 
 function compileFileCPP {
     local sourceName=${1}
 
-    arm-none-eabi-g++ $CXXFLAGS -o $OBJDIR/$(basename ${sourceName%.*}.o) -c $sourceName
+    g++ $CXXFLAGS -o $OBJDIR/$(basename ${sourceName%.*}.o) -c $sourceName
 }
 
 compileFileCPP main.cpp
@@ -62,7 +59,7 @@ compileFileC ../../libs/stb_vorbis/stb_vorbis.c
 compileFileCPP ../../libs/minimp3/minimp3.cpp
 compileFileC ../../libs/tinf/tinflate.c
 
-arm-none-eabi-gcc $LDFLAGS -o$OBJDIR/OpenLara.elf \
+gcc $LDFLAGS -o$BINDIR/mod/OpenLara/OpenLara.dll \
     $OBJDIR/brewFileIO.o \
     $OBJDIR/main.o \
     $OBJDIR/AEEAppGen.o \
@@ -74,6 +71,6 @@ arm-none-eabi-gcc $LDFLAGS -o$OBJDIR/OpenLara.elf \
     $OBJDIR/GLES_ext.o \
     $OBJDIR/EGL_1x.o \
     $LDLIBS
-./elf2mod.exe -output $BINDIR/mod/OpenLara/OpenLara.mod $OBJDIR/OpenLara.elf
+#./elf2mod.exe -output $BINDIR/mod/OpenLara/OpenLara.mod $OBJDIR/OpenLara.elf
 
 cp OpenLara.mif $BINDIR/mif/OpenLara.mif
