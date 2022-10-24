@@ -106,7 +106,7 @@ enum StringID {
     , STR_CTRL_LAST = STR_CTRL_FIRST + cMAX - 1
     // keys
     , STR_KEY_FIRST
-    , STR_KEY_LAST  = STR_KEY_FIRST + ikBack
+    , STR_KEY_LAST  = STR_KEY_FIRST + ikPhonePound
     // gamepad
     , STR_JOY_FIRST
     , STR_JOY_LAST  = STR_JOY_FIRST + jkMAX - 1
@@ -257,7 +257,7 @@ enum StringID {
 #ifdef _XBOX // TODO: illegal escape sequence
     #define STR_RUSSIAN "Russian"
 #else
-    #define STR_RUSSIAN "Русски{и"
+    #define STR_RUSSIAN "пїЅпїЅпїЅпїЅпїЅпїЅ{пїЅ"
 #endif
 
 #define STR_LANGUAGES \
@@ -287,7 +287,8 @@ enum StringID {
     , "PAD0", "PAD1", "PAD2", "PAD3", "PAD4", "PAD5", "PAD6", "PAD7", "PAD8", "PAD9", "PAD+", "PAD-", "PADx", "PAD/", "PAD." \
     , "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12" \
     , "-", "+", "<", ">", "/", "\\", ",", ".", "$", ":", "'", "PGUP", "PGDN", "HOME", "END", "DEL", "INS", "BKSP" \
-    , "NONE", "A", "B", "X", "Y", "L BUMPER", "R BUMPER", "SELECT", "START", "L STICK", "R STICK", "L TRIGGER", "R TRIGGER", "D-LEFT", "D-RIGHT", "D-UP", "D-DOWN"
+    , "NONE", "A", "B", "X", "Y", "L BUMPER", "R BUMPER", "SELECT", "START", "L STICK", "R STICK", "L TRIGGER", "R TRIGGER", "D-LEFT", "D-RIGHT", "D-UP", "D-DOWN" \
+    , "*", "#"
 
 #define STR_SCALE "25", "50", "75", "100"
 

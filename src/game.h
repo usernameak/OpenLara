@@ -301,15 +301,15 @@ namespace Game {
         }
     #endif
 
-        if (Input::down[ik5] && !inventory->isActive()) {
+        if (Input::down[ikK] && !inventory->isActive()) {
             if (level->players[0]->canSaveGame())
                 quickSave();
-            Input::down[ik5] = false;
+            Input::down[ikK] = false;
         }
 
-        if (Input::down[ik9] && !inventory->isActive()) {
+        if (Input::down[ikL] && !inventory->isActive()) {
             quickLoad();
-            Input::down[ik9] = false;
+            Input::down[ikL] = false;
         }
 
         if (!level->level.isCutsceneLevel())

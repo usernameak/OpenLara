@@ -91,7 +91,7 @@ namespace Input {
             }
         down[key] = value;
 
-        if (value && key <= ikBack) {
+        if (value && key <= ikPhonePound) {
             lastKey = key;
             touchTimerVis = 0.0f;
         }
