@@ -284,6 +284,7 @@ enum InputKey { ikNone,
     ikN0, ikN1, ikN2, ikN3, ikN4, ikN5, ikN6, ikN7, ikN8, ikN9, ikNAdd, ikNSub, ikNMul, ikNDiv, ikNDot, 
     ikF1, ikF2, ikF3, ikF4, ikF5, ikF6, ikF7, ikF8, ikF9, ikF10, ikF11, ikF12,
     ikMinus, ikPlus, ikLSB, ikRSB, ikSlash, ikBSlash, ikComma, ikDot, ikTilda, ikColon, ikApos, ikPrev, ikNext, ikHome, ikEnd, ikDel, ikIns, ikBack,
+    ikPhoneStar, ikPhonePound,
 // mouse
     ikMouseL, ikMouseR, ikMouseM,
 // touch
@@ -1031,6 +1032,24 @@ namespace Core {
 
         settings.audio.music = 14;
         settings.audio.sound = 14;
+    #endif
+
+    // use number keys on keypad phones
+    #ifdef _OS_BREW
+        settings.controls[0].keys[ cLeft      ].key = ik4;
+        settings.controls[0].keys[ cRight     ].key = ik6;
+        settings.controls[0].keys[ cUp        ].key = ik2;
+        settings.controls[0].keys[ cDown      ].key = ik8;
+        settings.controls[0].keys[ cJump      ].key = ik1;
+        settings.controls[0].keys[ cWalk      ].key = ik7;
+        settings.controls[0].keys[ cAction    ].key = ik5;
+        settings.controls[0].keys[ cWeapon    ].key = ik3;
+        settings.controls[0].keys[ cLook      ].key = ik9;
+        settings.controls[0].keys[ cDuck      ].key = ikPhoneStar;
+        settings.controls[0].keys[ cDash      ].key = ikPhonePound;
+        settings.controls[0].keys[ cRoll      ].key = ik0;
+        settings.controls[0].keys[ cInventory ].key = ikNone;
+        settings.controls[0].keys[ cStart     ].key = ikNone;
     #endif
 
     #if defined(_OS_RPI) || defined(_OS_CLOVER)
