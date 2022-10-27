@@ -356,6 +356,7 @@ static void parseTouchData(uint32 dwParam, int &x, int &y, int &id) {
 
 static boolean OpenLara_HandleEvent(AEEApplet *pMe, AEEEvent eCode, uint16 wParam, uint32 dwParam)
 {
+    LOG("OpenLara: EVT_APP_START\n");
     if(eCode == EVT_APP_START) {
         bfio_init(pMe->m_pIShell);
 
@@ -516,6 +517,7 @@ static boolean OpenLara_HandleEvent(AEEApplet *pMe, AEEEvent eCode, uint16 wPara
 
 int AEEClsCreateInstance(AEECLSID ClsId, IShell *pIShell, IModule *pMod, void **ppObj)
 {
+    LOG("Create OpenLara instance\n");
     *ppObj = NULL;
 
     if (AEEApplet_New(sizeof(AEEApplet),                // Size of our private class

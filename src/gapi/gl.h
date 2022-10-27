@@ -1334,9 +1334,15 @@ namespace GAPI {
             #endif
         #endif
 
-        LOG("Vendor   : %s\n", (char*)glGetString(GL_VENDOR));
-        LOG("Renderer : %s\n", (char*)glGetString(GL_RENDERER));
-        LOG("Version  : %s\n", (char*)glGetString(GL_VERSION));
+        LOG("Vendor     : %s\n", (char*)glGetString(GL_VENDOR));
+        LOG("Renderer   : %s\n", (char*)glGetString(GL_RENDERER));
+        LOG("Version    : %s\n", (char*)glGetString(GL_VERSION));
+
+#ifdef _OS_BREW
+        GLint maxTexSize;
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
+        LOG("MaxTexSize : %d\n", maxTexSize);
+#endif
 
     #ifndef FFP
         bool GLES3 = false;

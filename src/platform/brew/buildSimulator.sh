@@ -30,7 +30,7 @@ CFLAGS="-O0 -fshort-wchar -m32 -DAEE_SIMULATOR \
         -ffunction-sections -fdata-sections \
         -fno-exceptions -I$SDK_PATH/inc -I../../ -I$BREW_GL_SDK_PATH/inc \
         -fdiagnostics-color \
-        -D__ARMCGCC -DDYNAMIC_APP -D__BREW__ -DSTB_VORBIS_NO_STDIO"
+        -DDYNAMIC_APP -D__BREW__ -DSTB_VORBIS_NO_STDIO"
 LDFLAGS="${CFLAGS} -shared"
 CXXFLAGS="$CFLAGS -fno-use-cxa-atexit -fno-rtti"
 LDLIBS="-lm"
